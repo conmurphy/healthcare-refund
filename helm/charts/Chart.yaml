@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: ''
+description: Helm chart for the emear-pvt-application 
+name: 
+type: application
+version: ''

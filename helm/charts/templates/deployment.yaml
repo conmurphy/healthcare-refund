@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.deployment.application_name}}
+  namespace: {{.Values.deployment.application_name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.deployment.application_name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.deployment.application_name}}
+        version: "1"
+    spec:
+      # securityContext:
+      #     allowPrivilegeEscalation: false
+      #     runAsNonRoot: true
+          #runAsUser: 10001
+      containers:
+      - name: {{.Values.deployment.application_name}}
+        image: {{.Values.deployment.image}}:{{.Values.deployment.image_tag}}
+        env:
+          - name: CALENDAR_SERVICE
+            value: "calendar"
+          - name: CALENDAR_PORT
+            value: "5050"
+          - name: REDIS_SERVICE
+            value: "redis"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: PREDICTOR_SERVICE
+            value: "predictor"
+          - name: PREDICTOR_PORT
+            value: "5001"
+          - name: REFUND_SERVICE
+            value: "refund"
+          - name: REFUND_PORT
+            value: "5050"
+          - name: OFFER_SERVICE
+            value: "offers"
+          - name: SEARCH_SERVICE
+            value: "search"
+          - name: SEARCH_PORT
+            value: "5051"
+          - name: APPD_PROXY_CONTROL_PATH
+            value: /tmp/appd/run
+          - name: HTTP_PROXY
+            value: 'http://proxy-wsa.esl.cisco.com:80/'
+          - name: HTTPS_PROXY
+            value: 'http://proxy-wsa.esl.cisco.com:80/'
+          - name: NO_PROXY
+            value: 'calendar,frontend,predictor,redis,refund,search,localhost,127.0.0.1,10.96.0.1'
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: agent-config
+            mountPath: /shim.js
+            subPath: shim.js
+        ports:
+        - containerPort: 5050
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        # readinessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 5050
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 5050
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+      volumes:
+        - name: agent-config
+          configMap:
+            name: appd-nodejs-cm
+      
+
+

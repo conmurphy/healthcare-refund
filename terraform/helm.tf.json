@@ -1,0 +1,18 @@
+{
+    "resource": [
+      {
+        "helm_release": [
+          {
+            "helm_release": [
+              {
+                "chart": "",
+                "name": "",
+                "namespace": "",
+                "version": ""
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

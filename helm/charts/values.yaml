@@ -1,0 +1,7 @@
+deployment:
+  image: conmurphy/healthcare-calendar
+  image_tag: 0.3.35
+  application_name: 
+service:
+configmap:
+  

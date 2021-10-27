@@ -1,0 +1,26 @@
+#branch: develop
+check:
+  - CKV_K8S_8  # Liveness Probe Should be Configured
+  - CKV_K8S_9  # Readiness Probe Should be Configured
+  - CKV_K8S_10 # CPU requests should be set
+  - CKV_K8S_11 # CPU limits should be set
+  - CKV_K8S_12 # Memory requests should be set
+  - CKV_K8S_13 # Memory limits should be set
+  - CKV_K8S_21 # The default namespace should not be used
+  #- CKV_K8S_29 # Apply security context to your pods and containers
+  #- CKV_K8S_40 # Containers should run as a high UID to avoid host conflict
+hard-fail-on: 
+  #- CKV_K8S_29 # Apply security context to your pods and containers
+  #- CKV_K8S_40 # Containers should run as a high UID to avoid host conflict
+  - CKV_K8S_8  # Liveness Probe Should be Configured
+  - CKV_K8S_9  # Readiness Probe Should be Configured
+compact: false
+quiet: false 
+framework: helm
+directory:
+  - ../../helm
+output: cli 
+no-guide: true 
+
+
+

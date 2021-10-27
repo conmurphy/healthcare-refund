@@ -1,0 +1,162 @@
+name: Build and Publish
+
+on:
+  # run it on push to the default repository branch
+  push:
+    tags: '*'
+  # run it during pull request
+  #pull_request:
+  #  tags: '*'
+
+env: 
+    TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
+    TFC_ORG: ${{ secrets.TFC_ORG }}
+    TFC_WORKSPACE: ${{ secrets.TFC_WORKSPACE }}
+    REDIS_ACCESS_KEY: ${{ secrets.REDIS_ACCESS_KEY }}
+  
+jobs:
+  build-and-push-docker-image:
+    if: github.event.base_ref == 'refs/heads/main'
+    name: Build Docker image and push to repositories
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Get the tag name
+        run: echo "TAG=${GITHUB_REF:10}" >> $GITHUB_ENV #
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image and push to Docker Hub 
+        uses: docker/build-push-action@v2
+        with:
+          context: ./src
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ env.TAG }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-and-push-helm-chart:
+    # runs after a success build and push or the docker image
+    #needs: build-and-push-docker-image
+    name: Build and push Helm chart
+    runs-on: ubuntu-latest
+    steps:  
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Get the tag name
+        run: echo "TAG=${GITHUB_REF:10}" >> $GITHUB_ENV #
+      
+      - name: Update app and helm chart version in the Chart.yaml file
+        uses: microsoft/variable-substitution@v1 
+        with:
+          files: 'helm/charts/Chart.yaml, helm/charts/values.yaml'
+        env:
+          name: ${{ github.event.repository.name }}
+          appVersion: ${{ env.TAG }}
+          version: ${{ env.TAG }}
+          deployment.image_tag: ${{ env.TAG }}
+          deployment.image: conmurphy/${{ github.event.repository.name }}
+          deployment.application_name: ${{ github.event.repository.name }}
+      
+      - name: Check it worked
+        run: |
+          cat helm/charts/Chart.yaml
+          cat helm/charts/values.yaml
+          echo ${{ env.TAG }}
+
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with: 
+          config_file: tests/checkov/config.yaml
+          
+      # - name: Configure Git
+      #   run: |
+      #     git config user.name "$GITHUB_ACTOR"
+      #     git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+ 
+      # #Publishing the helm chart to use in the future
+      # #Below it is packaged to use with terraform
+      # - name: Run Publish Helm charts
+      #   uses: stefanprodan/helm-gh-pages@master
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     charts_dir: helm
+      #     linting: off
+      #     branch: gh-pages
+      #     target_dir: helm/packages
+
+  deploy-with-terraform:
+    # runs after a success build and push of the helm chart
+    needs: build-and-push-helm-chart
+    name: Deploy latest image with Terraform
+    runs-on: ubuntu-latest
+    steps:  
+      - name: checkout repo content
+        uses: actions/checkout@v2
+
+      - name: Get the tag name
+        run: echo "TAG=${GITHUB_REF:10}" >> $GITHUB_ENV #
+
+      - name: Get service name 
+        run: | 
+            echo "SERVICE_NAME=$(echo ${{ github.event.repository.name }} | cut -d- -f2)" >> $GITHUB_ENV
+            printenv
+            echo $SERVICE_NAME
+      - name: Update app and helm chart version in the Chart.yaml file
+        uses: microsoft/variable-substitution@v1 
+        with:
+          files: 'helm/charts/Chart.yaml, helm/charts/values.yaml'
+        env:
+          name: ${{ github.event.repository.name }}
+          appVersion: ${{ env.TAG }}
+          version: ${{ env.TAG }}
+          deployment.image_tag: ${{ env.TAG }}
+          deployment.image: conmurphy/${{ github.event.repository.name }}
+          deployment.application_name: ${{ github.event.repository.name }}
+          deployment.redis_access_key: ${{ env.REDIS_ACCESS_KEY }}
+          configmap.service_name: ${{ env.SERVICE_NAME }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.4.0
+
+      # packaging helm chart to use with terraform
+      - name: Helm package
+        run: | 
+          helm package helm/charts --destination terraform/
+          ls -la terraform
+      
+      - name: Update helm.tf with the latest version and chart name
+        uses: microsoft/variable-substitution@v1 
+        with:
+          files: 'terraform/helm.tf.json'
+        env:
+          resource.0.helm_release.0.helm_release.0.version: ${{ env.TAG }}
+          resource.0.helm_release.0.helm_release.0.chart: ./${{ github.event.repository.name }}-${{ env.TAG }}.tgz
+          resource.0.helm_release.0.helm_release.0.name: ${{ github.event.repository.name }}
+          resource.0.helm_release.0.helm_release.0.namespace: ${{ github.event.repository.name }}
+
+      - name: upload repo to terraform cloud
+        run: |
+          pwd
+          ls -la
+          chmod +x ./utils/upload_terraform_code.sh
+          ./utils/upload_terraform_code.sh
+
+        
