@@ -8,8 +8,7 @@ metadata:
   namespace: {{.Values.deployment.application_name}}
 spec:
   ports:
-  - name: http 
-    port: 5050
+  - port: 5050
     protocol: TCP
     targetPort: 5050
   selector:
