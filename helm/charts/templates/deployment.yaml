@@ -18,11 +18,12 @@ spec:
       #  allowPrivilegeEscalation: false
       #  runAsNonRoot: true
         runAsUser: 10001
-        capabilities:
-            add: ["NET_ADMIN","NET_RAW"]
       containers:
         - name: {{.Values.deployment.application_name}}
           image: {{.Values.deployment.image}}:{{.Values.deployment.image_tag}}
+          securityContext:
+              capabilities:
+                  add: ["NET_ADMIN","NET_RAW"]
           env:
             - name: CALENDAR_SERVICE
               value: "healthcare-calendar.healthcare-calendar.svc.cluster.local"
