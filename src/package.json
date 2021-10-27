@@ -1,0 +1,19 @@
+{
+    "name": "survivor-frontend",
+    "version": "1.0.0",
+    "description": "Refund Service for Survivor application - Cisco Live 2020 - Barcelona",
+    "author": "Stefano Gioia (sgioia@cisco.com)",
+    "main": "refund.js",
+    "scripts": {
+      "start": "node shim.js"
+    },
+    "dependencies": {
+      "path": "^0.12.7",
+      "os": "^0.1.1",
+      "redis": "^2.8.0",
+      "body-parser": "^1.19.0",
+      "express": "^4.17.1",
+      "console-stamp": "^0.2.9",
+      "appdynamics": "^4.5.22"
+    }
+  }

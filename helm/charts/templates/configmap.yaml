@@ -12,8 +12,8 @@ data:
         accountName: 'ACCOUNT_NAME',
         accountAccessKey: 'ACCESS_KEY',
         applicationName: 'healthcare',
-        tierName: '{{.Values.deployment.application_name}}',
-        nodeName: '{{.Values.deployment.application_name}}',
+        tierName: 'refundService',
+        nodeName: 'refundService',
         analyticsHostName: 'XYZ.saas.appdynamics.com',
         analyticsPort: 443,
         analyticsSslEnabled: true,
@@ -21,4 +21,4 @@ data:
               host: 'appd-infraviz.appdynamics',
               port: 9090,
             SSL: false }});
-        require("./calendar.js")
+        require("./refund.js")

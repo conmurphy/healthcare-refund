@@ -1,7 +1,9 @@
 deployment:
-  image: conmurphy/healthcare-calendar
-  image_tag: 0.3.35
+  image: 
+  image_tag: 
   application_name: 
+  redis_access_key: 
 service:
 configmap:
+  service_name:
   
