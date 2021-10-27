@@ -14,10 +14,12 @@ spec:
         app: {{.Values.deployment.application_name}}
         version: "1"
     spec:
-      # securityContext:
-      #     allowPrivilegeEscalation: false
-      #     runAsNonRoot: true
-      #     #runAsUser: 10001
+      securityContext:
+      #  allowPrivilegeEscalation: false
+      #  runAsNonRoot: true
+        runAsUser: 10001
+        capabilities:
+            add: ["NET_ADMIN","NET_RAW"]
       containers:
         - name: {{.Values.deployment.application_name}}
           image: {{.Values.deployment.image}}:{{.Values.deployment.image_tag}}
