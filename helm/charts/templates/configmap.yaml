@@ -5,20 +5,4 @@ metadata:
   namespace: {{.Values.deployment.application_name}}
 data:
   shim.js: |-
-    require("appdynamics").profile({
-        controllerHostName: 'XYZ.saas.appdynamics.com',
-        controllerPort: 80,
-        controllerSslEnabled: false,
-        accountName: 'ACCOUNT_NAME',
-        accountAccessKey: 'ACCESS_KEY',
-        applicationName: 'healthcare',
-        tierName: 'refundService',
-        nodeName: 'refundService',
-        analyticsHostName: 'XYZ.saas.appdynamics.com',
-        analyticsPort: 443,
-        analyticsSslEnabled: true,
-        analytics: {
-              host: 'appd-infraviz.appdynamics',
-              port: 9090,
-            SSL: false }});
         require("./refund.js")
