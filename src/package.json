@@ -13,7 +13,6 @@
       "redis": "^2.8.0",
       "body-parser": "^1.19.0",
       "express": "^4.17.1",
-      "console-stamp": "^0.2.9",
-      "appdynamics": "^4.5.22"
+      "console-stamp": "^0.2.9"
     }
   }

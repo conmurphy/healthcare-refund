@@ -4,36 +4,7 @@ var redis = require("redis");
 var os = require("os");
 const path = require("path");
 const bodyParser = require("body-parser");
-var appd = require('appdynamics');
 
-
-function addAnalytics(patient) {
-
-    appd.addSnapshotData("hc_ref_patient_name", appointment.name);
-    appd.addSnapshotData("hc_ref_patient_lastname", appointment.lastname);
-    appd.addSnapshotData("hc_ref_patient_date", appointment.date);
-    appd.addSnapshotData("hc_ref_patient_doctor", appointment.doctor);
-    appd.addSnapshotData("hc_ref_patient_price", parseInt(appointment.price, 10));
-    appd.addSnapshotData("hc_ref_patient_age", parseInt(appointment.age, 10));
-    appd.addSnapshotData("hc_ref_patient_gender", appointment.gender);
-    appd.addSnapshotData("hc_ref_patient_creditcard", appointment.creditcard);
-    appd.addSnapshotData("hc_ref_patient_category", appointment.category);
-    appd.addSnapshotData("hc_ref_patient_hospital", appointment.hospital);
-
-    console.log(name + ": Sending AppDynamics Snapshot data...!:")
-    appd.addAnalyticsData("reimburse_passenger_name", appointment.name);
-    appd.addAnalyticsData("hc_ref_patient_name", appointment.name);
-    appd.addAnalyticsData("hc_ref_patient_lastname", appointment.lastname);
-    appd.addAnalyticsData("hc_ref_patient_date", appointment.date);
-    appd.addAnalyticsData("hc_ref_patient_doctor", appointment.doctor);
-    appd.addAnalyticsData("hc_ref_patient_price", parseInt(appointment.price, 10));
-    appd.addAnalyticsData("hc_ref_patient_age", parseInt(appointment.age, 10));
-    appd.addAnalyticsData("hc_ref_patient_gender", appointment.gender);
-    appd.addAnalyticsData("hc_ref_patient_creditcard", appointment.creditcard);
-    appd.addAnalyticsData("hc_ref_patient_category", appointment.category);
-    appd.addAnalyticsData("hc_ref_patient_hospital", appointment.hospital);
-
-}
 
 require("console-stamp")(console, "ddd mmm dd yyyy HH:MM:ss");
 
