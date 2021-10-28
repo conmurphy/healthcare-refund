@@ -9,9 +9,9 @@ const bodyParser = require("body-parser");
 require("console-stamp")(console, "ddd mmm dd yyyy HH:MM:ss");
 
 // variable used
-var REDIS_IP = process.env.REDIS_SERVICE
-var REDIS_PORT = process.env.REDIS_PORT
-
+var redisHost = process.env.REDIS_SERVICE
+var redisPort = process.env.REDIS_PORT
+var redisAccessKey = process.env.REDIS_ACCESS_KEY 
 
 const APP_PORT = 5050;
 var addDelay = false;
@@ -34,11 +34,13 @@ app.use(
   })
 );
 
-var client = redis.createClient({
-  port: REDIS_PORT,
-  host: REDIS_IP,
-  socket_keepalive: true
-});
+// var client = redis.createClient({
+//   port: REDIS_PORT,
+//   host: REDIS_IP,
+//   socket_keepalive: true
+// });
+
+var client = redis.createClient(redisPort, redisHost,{auth_pass: redisAccessKey});
 
 // connecting to the db
 client.on("connect", function () {
