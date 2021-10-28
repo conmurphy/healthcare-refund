@@ -21,6 +21,8 @@ spec:
       containers:
         - name: {{.Values.deployment.application_name}}
           image: {{.Values.deployment.image}}:{{.Values.deployment.image_tag}}
+          securityContext:
+            add: ["NET_ADMIN","NET_RAW"]
           env:
             - name: CALENDAR_SERVICE
               value: "healthcare-calendar.healthcare-calendar.svc.cluster.local"
