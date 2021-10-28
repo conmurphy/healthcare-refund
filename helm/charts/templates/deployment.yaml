@@ -48,12 +48,12 @@ spec:
               value: "5051"
             - name: APPD_PROXY_CONTROL_PATH
               value: /tmp/appd/run
-            - name: HTTP_PROXY
-              value: 'http://proxy-wsa.esl.cisco.com:80/'
-            - name: HTTPS_PROXY
-              value: 'http://proxy-wsa.esl.cisco.com:80/'
-            - name: NO_PROXY
-              value: 'healthcare-calendar.healthcare-calendar.svc.cluster.local,healthcare-frontend.healthcare-frontend.svc.cluster.local,healthcare-predictor.healthcare-predictor.svc.cluster.local,redis,healthcare-refund.healthcare-refund.svc.cluster.local,healthcare-search.healthcare-search.svc.cluster.local,localhost,127.0.0.1,10.96.0.1'
+            # - name: HTTP_PROXY
+            #   value: 'http://proxy-wsa.esl.cisco.com:80/'
+            # - name: HTTPS_PROXY
+            #   value: 'http://proxy-wsa.esl.cisco.com:80/'
+            # - name: NO_PROXY
+            #   value: 'healthcare-calendar.healthcare-calendar.svc.cluster.local,healthcare-frontend.healthcare-frontend.svc.cluster.local,healthcare-predictor.healthcare-predictor.svc.cluster.local,redis,healthcare-refund.healthcare-refund.svc.cluster.local,healthcare-search.healthcare-search.svc.cluster.local,localhost,127.0.0.1,10.96.0.1'
           imagePullPolicy: Always
           volumeMounts:
             - name: agent-config
